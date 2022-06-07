@@ -2288,7 +2288,7 @@ else
     if [ "$arch" == "arm64" ]; then
         echo "echo \"[PASSWORD REDACTED]\" | \"$working_macos_app/Contents/Resources/startosinstall\" \"" "${install_args[@]}" "\" --pidtosignal $$ --agreetolicense --nointeraction --stdinpass --user \"$account_shortname\" \"" "${install_package_list[@]}" "\" & wait $!"
     else
-        echo "$working_macos_app/Contents/Resources/startosinstall\" \"" "${install_args[@]}" "\" --pidtosignal $$ --agreetolicense --nointeraction \"" "${install_package_list[@]}" "\" & wait $!"
+        echo "\"$working_macos_app/Contents/Resources/startosinstall\" \"" "${install_args[@]}" "\" --pidtosignal $$ --agreetolicense --nointeraction \"" "${install_package_list[@]}" "\" & wait $!"
      fi
     sleep 30
     post_prep_work
