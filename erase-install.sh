@@ -2278,7 +2278,7 @@ if [[ $test_run != "yes" ]]; then
             fi
         fi        
         # shellcheck disable=SC2086
-        "$working_macos_app/Contents/Resources/startosinstall" "${install_args[@]}" --pidtosignal $$ --agreetolicense --nointeraction --stdinpass --user "$account_shortname" "${install_package_list[@]}" <<< $account_password & wait $!
+        echo $account_password | "$working_macos_app/Contents/Resources/startosinstall" "${install_args[@]}" --pidtosignal $$ --agreetolicense --nointeraction --stdinpass --user "$account_shortname" "${install_package_list[@]}" & wait $!
     else
         "$working_macos_app/Contents/Resources/startosinstall" "${install_args[@]}" --pidtosignal $$ --agreetolicense --nointeraction "${install_package_list[@]}" & wait $!
     fi
@@ -2286,10 +2286,10 @@ if [[ $test_run != "yes" ]]; then
 else
     echo "   [$script_name] Run without '--test-run' to run this command:"
     if [ "$arch" == "arm64" ]; then
-        echo "$working_macos_app/Contents/Resources/startosinstall" "${install_args[@]}" "--pidtosignal $$ --agreetolicense --nointeraction --stdinpass --user" "$account_shortname" "${install_package_list[@]}" "<<< [PASSWORD REDACTED]" "& wait $!"
+        echo "echo \"[PASSWORD REDACTED]\" | \"$working_macos_app/Contents/Resources/startosinstall\" \"" "${install_args[@]}" "\" --pidtosignal $$ --agreetolicense --nointeraction --stdinpass --user \"$account_shortname\" \"" "${install_package_list[@]}" "\" & wait $!"
     else
-        echo "$working_macos_app/Contents/Resources/startosinstall" "${install_args[@]}" --pidtosignal $$ --agreetolicense --nointeraction "${install_package_list[@]}" "& wait $!"
-    fi
+        echo "$working_macos_app/Contents/Resources/startosinstall\" \"" "${install_args[@]}" "\" --pidtosignal $$ --agreetolicense --nointeraction \"" "${install_package_list[@]}" "\" & wait $!"
+     fi
     sleep 30
     post_prep_work
 fi
