@@ -1039,27 +1039,35 @@ get_user_details() {
         exit 1
     fi
 
-    # get password and check that the password is correct
-    password_attempts=1
-    password_check="fail"
-    while [[ "$password_check" != "pass" ]] ; do
-        echo "   [get_user_details] ask for password (attempt $password_attempts/$max_password_attempts)"
-        account_password=$(ask_for_password)
-        ask_for_password_rc=$?
-        # prevent accidental cancelling by simply pressing return (entering an empty password)
-        if [[ "$ask_for_password_rc" -ne 0 ]]; then
-            echo "   [get_user_details] User cancelled."
-            exit 1
-        fi
-        check_password "$account_shortname" "$account_password"
+    if [[ -z "$account_password" ]]; then
+        # get password and check that the password is correct
+        password_attempts=1
+        password_check="fail"
+        while [[ "$password_check" != "pass" ]] ; do
+            echo "   [get_user_details] ask for password (attempt $password_attempts/$max_password_attempts)"
+            account_password=$(ask_for_password)
+            ask_for_password_rc=$?
+            # prevent accidental cancelling by simply pressing return (entering an empty password)
+            if [[ "$ask_for_password_rc" -ne 0 ]]; then
+                echo "   [get_user_details] User cancelled."
+                exit 1
+            fi
+            check_password "$account_shortname" "$account_password"
 
-        if [[ ( "$password_check" != "pass" ) && ( $max_password_attempts != "infinite" ) && ( $password_attempts -ge $max_password_attempts ) ]]; then
-            # open_osascript_dialog syntax: title, message, button1, icon
-            open_osascript_dialog "${!dialog_invalid_password}: $user" "" "OK" 2
+            if [[ ( "$password_check" != "pass" ) && ( $max_password_attempts != "infinite" ) && ( $password_attempts -ge $max_password_attempts ) ]]; then
+                # open_osascript_dialog syntax: title, message, button1, icon
+                open_osascript_dialog "${!dialog_invalid_password}: $user" "" "OK" 2
+                exit 1
+            fi
+            password_attempts=$((password_attempts+1))
+        done
+    else
+        check_password "$account_shortname" "$account_password"
+        if [[ $password_check != "pass" ]]; then
+            echo "   [get_user_details] Provided password is not correct for $account_shortname"
             exit 1
         fi
-        password_attempts=$((password_attempts+1))
-    done
+    fi
 
     # if we are performing eraseinstall the user needs to be an admin so let's promote the user
     if [[ $erase == "yes" ]]; then
@@ -1512,6 +1520,7 @@ show_help() {
       this script cannot be run at the login window or from remote terminal.
     --current-user      Authenticate startosinstall using the current user
     --user XYZ          Supply a user with which to authenticate startosinstall
+    --userpassword      Supply a password with which to authenticate startosinstall
     --max-password-attempts NN | infinite
                         Overrides the default of 5 attempts to ask for the user's password. Using
                         'infinite' will disable the Cancel button and asking until the password is
@@ -1771,6 +1780,10 @@ while test $# -gt 0 ; do
         --workdir)
             shift
             workdir="$1"
+            ;;
+        --userpassword)
+            shift
+            account_password="$1"
             ;;
         --preinstall-command)
             shift
