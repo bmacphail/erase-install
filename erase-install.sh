@@ -1520,7 +1520,7 @@ show_help() {
       this script cannot be run at the login window or from remote terminal.
     --current-user      Authenticate startosinstall using the current user
     --user XYZ          Supply a user with which to authenticate startosinstall
-    --userpassword      Supply a password with which to authenticate startosinstall
+    --userpassword XYZ  Supply a password with which to authenticate startosinstall
     --max-password-attempts NN | infinite
                         Overrides the default of 5 attempts to ask for the user's password. Using
                         'infinite' will disable the Cancel button and asking until the password is
