@@ -127,7 +127,7 @@ dialog_reinstall_status_nl="MacOS voorbereiden voor installatie"
 dialog_reinstall_status_fr="Préparation de macOS pour l'installation"
 
 dialog_rebooting_heading_en="The upgrade is now ready for installation. Please save your work!"
-dialog_rebooting_heading_de="Das macOS-Aktualisierung steht nun zur Installation bereit. Bitte sichern Sie Ihre Arbeit!"
+dialog_rebooting_heading_de="Die macOS-Aktualisierung steht nun zur Installation bereit. Bitte sichern Sie Ihre Arbeit!"
 dialog_rebooting_heading_nl="De upgrade is nu klaar voor installatie. Sla uw werk op!"
 dialog_rebooting_heading_fr="La mise à niveau est maintenant prête à être installée. Veuillez sauvegarder votre travail!"
 
@@ -1520,7 +1520,6 @@ show_help() {
       this script cannot be run at the login window or from remote terminal.
     --current-user      Authenticate startosinstall using the current user
     --user XYZ          Supply a user with which to authenticate startosinstall
-    --userpassword XYZ  Supply a password with which to authenticate startosinstall
     --max-password-attempts NN | infinite
                         Overrides the default of 5 attempts to ask for the user's password. Using
                         'infinite' will disable the Cancel button and asking until the password is
@@ -1571,7 +1570,7 @@ finish() {
     # if we promoted the user then we should demote it again
     if [[ $promoted_user ]]; then
         /usr/sbin/dseditgroup -o edit -d "$promoted_user" admin
-        echo "     [$script_name] User $promoted_user was demoted back to standard user"
+        echo "     [finish] User $promoted_user was demoted back to standard user"
     fi
 
     # kill caffeinate
@@ -2191,8 +2190,8 @@ if [[ $installer_darwin_version -ge 20 ]]; then
     install_args+=("--allowremoval")
 fi
 
-# macOS 11 (Darwin 20) and above can use the --rebootdelay option
-if [[ $installer_darwin_version -ge 20 && "$rebootdelay" -gt 0 ]]; then
+# macOS 10.15 (Darwin 19) and above can use the --rebootdelay option
+if [[ $installer_darwin_version -ge 19 && "$rebootdelay" -gt 0 ]]; then
     install_args+=("--rebootdelay")
     install_args+=("$rebootdelay")
 else
